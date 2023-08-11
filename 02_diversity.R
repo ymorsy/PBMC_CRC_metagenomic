@@ -4,7 +4,8 @@ pacman::p_load(
     doParallel, foreach,
     phyloseq, microbiome, vegan, pairwiseAdonis,
     RColorBrewer, pheatmap,
-    ggsci, ggalluvial
+    ggsci, ggalluvial,
+    plotly, htmlwidgets
 )
 
 # load the Phyloseq object and define the params -----
@@ -27,6 +28,8 @@ phyloseq_obj_rar_a_div <- alpha(phyloseq_obj_rar, index = "all") %>%
 phyloseq_obj_rar_meta <- meta(phyloseq_obj_rar) %>%
     rownames_to_column("Sample_name")
 # merge these two data frames into one
+
+phyloseq_obj_rar_meta
 
 phyloseq_obj_rar_a_div_meta <- left_join(phyloseq_obj_rar_a_div, phyloseq_obj_rar_meta, by = "Sample_name") %>%
     as_tibble()
@@ -68,6 +71,10 @@ if (is.null(snakemake@params$facet)) {
             )
 
         print(p)
+        saveWidget(
+            ggplotly(p),
+            file = str_glue("{snakemake@params$alpha_diversity_html}_{alpha}.html")
+        )
     }
 } else {
     for (alpha in alpha_dis) {
@@ -91,12 +98,15 @@ if (is.null(snakemake@params$facet)) {
             )
 
         print(p)
+        saveWidget(ggplotly(p),
+            file = str_glue("{snakemake@params$alpha_diversity_html}_{alpha}.html")
+        )
     }
 }
 dev.off()
 # beta diversity plotting ----
 
-# betas_distances <- c("bray", "jaccard")
+betas_distances <- c("bray", "jaccard")
 
 betas <- snakemake@params$betas %>%
     purrr::set_names() %>%
@@ -117,6 +127,11 @@ if (is.null(snakemake@params$facet)) {
                 axis.title.y = element_text(size = rel(1.5)),
             )
         print(p2)
+        beta_name <- names(betas[i])
+        saveWidget(
+            ggplotly(p2),
+            file = str_glue("{snakemake@params$beta_diversity_html}_{beta_name}.html")
+        )
     }
     for (i in seq_along(betas)) {
         p2 <- plot_ordination(phyloseq_obj_rar, betas[[i]], color = snakemake@params$x)
@@ -130,6 +145,11 @@ if (is.null(snakemake@params$facet)) {
                 axis.title.y = element_text(size = rel(1.5)),
             )
         print(p2)
+        beta_name <- names(betas[i])
+        saveWidget(
+            ggplotly(p2),
+            file = str_glue("{snakemake@params$beta_diversity_html}_{beta_name}.html")
+        )
     }
 } else {
     for (i in seq_along(betas)) {
@@ -144,6 +164,11 @@ if (is.null(snakemake@params$facet)) {
                 axis.title.y = element_text(size = rel(1.5)),
             )
         print(p2)
+        beta_name <- names(betas[i])
+        saveWidget(
+            ggplotly(p2),
+            file = str_glue("{snakemake@params$beta_diversity_html}_{beta_name}.html")
+        )
     }
     for (i in seq_along(betas)) {
         p2 <- plot_ordination(phyloseq_obj_rar, betas[[i]], color = snakemake@params$x, shape = snakemake@params$x) +
@@ -158,6 +183,11 @@ if (is.null(snakemake@params$facet)) {
                 axis.title.y = element_text(size = rel(1.5)),
             )
         print(p2)
+        beta_name <- names(betas[i])
+        saveWidget(
+            ggplotly(p2),
+            file = str_glue("{snakemake@params$beta_diversity_html}_{beta_name}.html")
+        )
     }
 }
 dev.off()

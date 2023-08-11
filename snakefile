@@ -2,11 +2,11 @@ configfile: "config.yaml"
 
 rule targets:
     input: 
-        expand("{exp}/{exp}_phyloseq_obj.rds", exp=config["Exp_filters"]),
-        expand("{exp}/{exp}_metadata.xlsx", exp=config["Exp_filters"]),
-        expand("{exp}/{exp}_clrs.rds", exp=config["Exp_filters"]),
-        expand("{exp}/{exp}_01_Alpha_diversity.pdf", exp=config["Exp_filters"]),
-        expand("{exp}/{exp}_02_Beta_diversity.pdf", exp=config["Exp_filters"]),
+        expand("{exp}/{exp}_phyloseq_obj.rds", exp=config["Exp_filters"][1]),
+        expand("{exp}/{exp}_metadata.xlsx", exp=config["Exp_filters"][1]),
+        expand("{exp}/{exp}_clrs.rds", exp=config["Exp_filters"][1]),
+        expand("{exp}/02_Diversity/01_Alpha_diversity_{exp}.pdf", exp=config["Exp_filters"][1]),
+        expand("{exp}/02_Diversity/02_Beta_diversity_{exp}.pdf", exp=config["Exp_filters"][1]),
 
 rule create_phyloseq_obj:
     input:
@@ -28,9 +28,11 @@ rule diversity:
         phyloseq_obj="{exp}/{exp}_phyloseq_obj.rds",
         clrs="{exp}/{exp}_clrs.rds",
     output:
-        alpha_diversity="{exp}/{exp}_01_Alpha_diversity.pdf",
-        beta_diversity="{exp}/{exp}_02_Beta_diversity.pdf",
+        alpha_diversity="{exp}/02_Diversity/01_Alpha_diversity_{exp}.pdf",
+        beta_diversity="{exp}/02_Diversity/02_Beta_diversity_{exp}.pdf",
     params:
+        alpha_diversity_html="{exp}/02_Diversity/01_Alpha_diversity_",
+        beta_diversity_html="{exp}/02_Diversity/02_Beta_diversity_",
         depth=config["analysis_fctrs"][0]["depth"],
         x=config["analysis_fctrs"][1]["x"],
         facet=config["analysis_fctrs"][2]["facet"],
