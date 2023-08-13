@@ -9,6 +9,7 @@ rule targets:
         expand("{exp}/02_Diversity/02_Beta_diversity_{exp}.pdf", exp=config["Exp_filters"][1]),
         expand("{exp}/01_Taxa/{exp}_rel_abundance_level_{l}.xlsx", exp=config["Exp_filters"][1], l=config["lev_tax"][1]),
         expand("{exp}/01_Taxa/{exp}_abs_abundance_level_{l}.xlsx", exp=config["Exp_filters"][1], l=config["lev_tax"][1]),
+        expand("{exp}/03_Taxa_bar_grouped/{exp}_grouped_taxa_bars.pdf", exp=config["Exp_filters"][1]),
 
 rule create_phyloseq_obj:
     input:
@@ -55,3 +56,15 @@ rule taxa_count:
     script:
         "03_taxa_count_export.R"
 
+rule grouped_taxa_bars:
+    input:
+        phyloseq_obj="{exp}/{exp}_phyloseq_obj.rds",
+        clrs="{exp}/{exp}_clrs.rds",
+    output:
+        grouped_taxa_bars_plot="{exp}/03_Taxa_bar_grouped/{exp}_grouped_taxa_bars.pdf",
+    params:
+        taxrank=config["lev_tax"][1],
+        cutoff=config["grouped_taxa_bars_params"][0]["cutoff"],
+        meta_fct=config["grouped_taxa_bars_params"][1]["meta_fct"],
+    script:
+        "04_grouped_taxa_bars.R"
