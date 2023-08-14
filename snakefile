@@ -11,8 +11,10 @@ rule targets:
         expand("{exp}/01_Taxa/{exp}_rel_abundance_level_{l}.xlsx", exp=config["Exp_filters"][1], l=config["lev_tax"][1]),
         expand("{exp}/01_Taxa/{exp}_abs_abundance_level_{l}.xlsx", exp=config["Exp_filters"][1], l=config["lev_tax"][1]),
         expand("{exp}/03_Taxa_bar_grouped/{exp}_grouped_taxa_bars.pdf", exp=config["Exp_filters"][1]),
-        expand("{exp}/04_Heatmaps/{exp}_Top_30_abund_rel_{l}.pdf", exp=config["Exp_filters"][1], l=config["lev_tax"][1]),
-        expand("{exp}/04_Heatmaps/{exp}_Top_30_abund_abs_{l}.pdf", exp=config["Exp_filters"][1], l=config["lev_tax"][1]),
+        expand("{exp}/05_Heatmaps/{exp}_Top_30_abund_rel_{l}.pdf", exp=config["Exp_filters"][1], l=config["lev_tax"][1]),
+        expand("{exp}/05_Heatmaps/{exp}_Top_30_abund_abs_{l}.pdf", exp=config["Exp_filters"][1], l=config["lev_tax"][1]),
+        expand("{exp}/04_Statistical_analysis/02_Taxa/{exp}_stat_rel_{l}.xlsx", exp=config["Exp_filters"][1], l=config["lev_tax"][1]),
+        expand("{exp}/04_Statistical_analysis/02_Taxa/{exp}_stat_rel_sig_{l}.xlsx", exp=config["Exp_filters"][1], l=config["lev_tax"][1]),
 
 rule create_phyloseq_obj:
     input:
@@ -80,11 +82,27 @@ rule heatmpas:
         df_rel="{exp}/01_Taxa/{exp}_rel_abundance_level_{l}.xlsx",
         df_abs="{exp}/01_Taxa/{exp}_abs_abundance_level_{l}.xlsx",
     output:
-        hm_rel="{exp}/04_Heatmaps/{exp}_Top_30_abund_rel_{l}.pdf",
-        hm_abs="{exp}/04_Heatmaps/{exp}_Top_30_abund_abs_{l}.pdf",
+        hm_rel="{exp}/05_Heatmaps/{exp}_Top_30_abund_rel_{l}.pdf",
+        hm_abs="{exp}/05_Heatmaps/{exp}_Top_30_abund_abs_{l}.pdf",
     params:
         taxrank=config["lev_tax"][1],
         exp="{exp}",
         meta_fct=config["grouped_taxa_bars_params"][1]["meta_fct"],
     script:
         "05_heatmap.R"
+
+rule stat:
+    input:
+        phyloseq_obj="{exp}/{exp}_phyloseq_obj.rds",
+        metadata="{exp}/{exp}_metadata.rds",
+        clrs="{exp}/{exp}_clrs.rds",
+        df_rel="{exp}/01_Taxa/{exp}_rel_abundance_level_{l}.xlsx",
+    output:
+        stat_rel="{exp}/04_Statistical_analysis/02_Taxa/{exp}_stat_rel_{l}.xlsx",
+        stat_rel_sig="{exp}/04_Statistical_analysis/02_Taxa/{exp}_stat_rel_sig_{l}.xlsx",
+    params:
+        taxrank=config["lev_tax"][1],
+        exp="{exp}",
+        meta_fct=config["grouped_taxa_bars_params"][1]["meta_fct"],
+    script:
+        "06_statistical_analysis.R"
