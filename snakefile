@@ -19,6 +19,11 @@ rule targets:
         expand("{exp}/04_Statistical_analysis/01_Diversity/{exp}_{alpha}_dis_stat.xlsx", exp=config["Exp_filters"][1], alpha=config["diversity_params"][0]["alpha_distances"]),
         expand("{exp}/04_Statistical_analysis/01_Diversity/{exp}_{alpha}_dis_stat_tukey.xlsx", exp=config["Exp_filters"][1], alpha=config["diversity_params"][0]["alpha_distances"]),
         expand("{exp}/04_Statistical_analysis/01_Diversity/{exp}_{beta}_dis_stat_perm.xlsx", exp=config["Exp_filters"][1], beta=config["diversity_params"][1]["betas_distances"]),
+        expand("{exp}/06_Lefse_input/{exp}_lefse_input_{l}.txt", exp=config["Exp_filters"][1], l=config["lev_tax"][1]),
+        expand("{exp}/07_lefse_output/{exp}_lefse_{l}.in", exp=config["Exp_filters"][1], l=config["lev_tax"][1]),
+        expand("{exp}/07_lefse_output/{exp}_lefse_{l}.res", exp=config["Exp_filters"][1], l=config["lev_tax"][1]),
+        expand("{exp}/07_lefse_output/{exp}_lefse_{l}.png", exp=config["Exp_filters"][1], l=config["lev_tax"][1]),
+        expand("{exp}/07_lefse_output/{exp}_lefse_{l}.zip", exp=config["Exp_filters"][1], l=config["lev_tax"][1]),
 
 rule create_phyloseq_obj:
     input:
@@ -151,3 +156,41 @@ rule stat_diversity_beta:
     script:
         "06_statistical_analysis_b_diversity.R"
 
+rule prepare_lefse_input:
+    input:
+        taxa_count_rel="{exp}/01_Taxa/{exp}_rel_abundance_level_{l}.xlsx",
+        k2_mpa_map=config["k2_mpa_map"],
+        metadata="{exp}/{exp}_metadata.rds",
+        clrs="{exp}/{exp}_clrs.rds",
+    output:
+        lefse_df="{exp}/06_Lefse_input/{exp}_lefse_input_{l}.txt",
+    params:
+        taxrank=config["lev_tax"][1],
+        exp="{exp}",
+        meta_fct=config["grouped_taxa_bars_params"][1]["meta_fct"],
+    script:
+        "07_prepare_lefse_input.R"
+
+rule lefse:
+    input:
+        lefse_df="{exp}/06_Lefse_input/{exp}_lefse_input_{l}.txt",
+    output:
+        lefse_in="{exp}/07_lefse_output/{exp}_lefse_{l}.in",
+        lefse_res="{exp}/07_lefse_output/{exp}_lefse_{l}.res",
+        lefse_png="{exp}/07_lefse_output/{exp}_lefse_{l}.png",
+        lefse_zip="{exp}/07_lefse_output/{exp}_lefse_{l}.zip",
+        lefse_clad="{exp}/07_lefse_output/{exp}_lefse_{l}_cladogram.pdf",
+    conda:
+        "envs/lefse.yaml",
+    params:
+        taxrank=config["lev_tax"][1],
+        exp="{exp}",
+        meta_fct=config["grouped_taxa_bars_params"][1]["meta_fct"],
+    shell:
+        """
+        lefse_format_input.py {input.lefse_df} {output.lefse_in} -f c -c 2 -u 1 -o 1000000
+        lefse_run.py {output.lefse_in} {output.lefse_res}
+        lefse_plot_res.py {output.lefse_res} {output.lefse_png} --dpi 1200 --width 20
+        lefse_plot_cladogram.py {output.lefse_res} {output.lefse_clad} --format pdf --dpi 1200 
+        lefse_plot_features.py {output.lefse_in} {output.lefse_res} {output.lefse_zip} --format pdf --dpi 1200 --archive zip
+        """
