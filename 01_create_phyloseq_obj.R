@@ -77,3 +77,4 @@ phyl_obj
 
 export(phyl_obj, file = snakemake@output$phyloseq_obj)
 export(df_meta %>% rownames_to_column("Sample_name"), file = snakemake@output$metadata)
+export(df_meta %>% rownames_to_column("Sample_name"), file = snakemake@output$metadata_rds)

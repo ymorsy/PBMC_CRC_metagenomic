@@ -4,12 +4,15 @@ rule targets:
     input: 
         expand("{exp}/{exp}_phyloseq_obj.rds", exp=config["Exp_filters"][1]),
         expand("{exp}/{exp}_metadata.xlsx", exp=config["Exp_filters"][1]),
+        expand("{exp}/{exp}_metadata.rds", exp=config["Exp_filters"][1]),
         expand("{exp}/{exp}_clrs.rds", exp=config["Exp_filters"][1]),
         expand("{exp}/02_Diversity/01_Alpha_diversity_{exp}.pdf", exp=config["Exp_filters"][1]),
         expand("{exp}/02_Diversity/02_Beta_diversity_{exp}.pdf", exp=config["Exp_filters"][1]),
         expand("{exp}/01_Taxa/{exp}_rel_abundance_level_{l}.xlsx", exp=config["Exp_filters"][1], l=config["lev_tax"][1]),
         expand("{exp}/01_Taxa/{exp}_abs_abundance_level_{l}.xlsx", exp=config["Exp_filters"][1], l=config["lev_tax"][1]),
         expand("{exp}/03_Taxa_bar_grouped/{exp}_grouped_taxa_bars.pdf", exp=config["Exp_filters"][1]),
+        expand("{exp}/04_Heatmaps/{exp}_Top_30_abund_rel_{l}.pdf", exp=config["Exp_filters"][1], l=config["lev_tax"][1]),
+        expand("{exp}/04_Heatmaps/{exp}_Top_30_abund_abs_{l}.pdf", exp=config["Exp_filters"][1], l=config["lev_tax"][1]),
 
 rule create_phyloseq_obj:
     input:
@@ -22,6 +25,7 @@ rule create_phyloseq_obj:
     output:
         phyloseq_obj="{exp}/{exp}_phyloseq_obj.rds",
         metadata="{exp}/{exp}_metadata.xlsx",
+        metadata_rds="{exp}/{exp}_metadata.rds",
         clrs="{exp}/{exp}_clrs.rds",
     script:
         "01_create_phyloseq_obj.R"
@@ -68,3 +72,19 @@ rule grouped_taxa_bars:
         meta_fct=config["grouped_taxa_bars_params"][1]["meta_fct"],
     script:
         "04_grouped_taxa_bars.R"
+
+rule heatmpas:
+    input:
+        metadata="{exp}/{exp}_metadata.rds",
+        clrs="{exp}/{exp}_clrs.rds",
+        df_rel="{exp}/01_Taxa/{exp}_rel_abundance_level_{l}.xlsx",
+        df_abs="{exp}/01_Taxa/{exp}_abs_abundance_level_{l}.xlsx",
+    output:
+        hm_rel="{exp}/04_Heatmaps/{exp}_Top_30_abund_rel_{l}.pdf",
+        hm_abs="{exp}/04_Heatmaps/{exp}_Top_30_abund_abs_{l}.pdf",
+    params:
+        taxrank=config["lev_tax"][1],
+        exp="{exp}",
+        meta_fct=config["grouped_taxa_bars_params"][1]["meta_fct"],
+    script:
+        "05_heatmap.R"
