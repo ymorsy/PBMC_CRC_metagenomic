@@ -21,6 +21,8 @@ set.seed(5234)
 rare_depth <- sort(sample_sums(phyloseq_obj))[Position(function(x) x > snakemake@params$depth, sort(sample_sums(phyloseq_obj)))]
 phyloseq_obj_rar <- rarefy_even_depth(phyloseq_obj, sample.size = rare_depth)
 
+rio::export(phyloseq_obj_rar, snakemake@output$phyloseq_obj_rar)
+
 # alpha
 phyloseq_obj_rar_a_div <- alpha(phyloseq_obj_rar, index = "all") %>%
     rownames_to_column("Sample_name")
@@ -106,7 +108,6 @@ if (is.null(snakemake@params$facet)) {
 dev.off()
 # beta diversity plotting ----
 
-betas_distances <- c("bray", "jaccard")
 
 betas <- snakemake@params$betas %>%
     purrr::set_names() %>%

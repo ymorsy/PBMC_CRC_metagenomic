@@ -8,8 +8,8 @@ pacman::p_load(
 )
 
 # load the Phyloseq object and define the params -----
-phyloseq_obj <- rio::import(snakemake@input$phyloseq_obj)
-phyloseq_obj
+# phyloseq_obj <- rio::import(snakemake@input$phyloseq_obj)
+# phyloseq_obj
 
 palette <- rio::import(snakemake@input$clrs)
 
