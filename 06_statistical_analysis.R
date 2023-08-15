@@ -47,6 +47,7 @@ if (length(palette) == 2) {
         mutate(Exp_test = map(
             .x = data,
             ~ aov(Abundance ~ !!as.symbol(snakemake@params$meta_fct), data = .x) %>%
+                TukeyHSD() %>%
                 broom::tidy()
         )) %>%
         unnest(Exp_test) %>%

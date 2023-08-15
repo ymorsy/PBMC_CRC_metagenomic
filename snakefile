@@ -2,28 +2,28 @@ configfile: "config.yaml"
 
 rule targets:
     input: 
-        expand("{exp}/{exp}_phyloseq_obj.rds", exp=config["Exp_filters"][1]),
-        expand("{exp}/{exp}_phyloseq_obj_rar.rds", exp=config["Exp_filters"][1]),
-        expand("{exp}/{exp}_metadata.xlsx", exp=config["Exp_filters"][1]),
-        expand("{exp}/{exp}_metadata.rds", exp=config["Exp_filters"][1]),
-        expand("{exp}/{exp}_clrs.rds", exp=config["Exp_filters"][1]),
-        expand("{exp}/02_Diversity/01_Alpha_diversity_{exp}.pdf", exp=config["Exp_filters"][1]),
-        expand("{exp}/02_Diversity/02_Beta_diversity_{exp}.pdf", exp=config["Exp_filters"][1]),
-        expand("{exp}/01_Taxa/{exp}_rel_abundance_level_{l}.xlsx", exp=config["Exp_filters"][1], l=config["lev_tax"][1]),
-        expand("{exp}/01_Taxa/{exp}_abs_abundance_level_{l}.xlsx", exp=config["Exp_filters"][1], l=config["lev_tax"][1]),
-        expand("{exp}/03_Taxa_bar_grouped/{exp}_grouped_taxa_bars.pdf", exp=config["Exp_filters"][1]),
-        expand("{exp}/05_Heatmaps/{exp}_Top_30_abund_rel_{l}.pdf", exp=config["Exp_filters"][1], l=config["lev_tax"][1]),
-        expand("{exp}/05_Heatmaps/{exp}_Top_30_abund_abs_{l}.pdf", exp=config["Exp_filters"][1], l=config["lev_tax"][1]),
-        expand("{exp}/04_Statistical_analysis/02_Taxa/{exp}_stat_rel_{l}.xlsx", exp=config["Exp_filters"][1], l=config["lev_tax"][1]),
-        expand("{exp}/04_Statistical_analysis/02_Taxa/{exp}_stat_rel_sig_{l}.xlsx", exp=config["Exp_filters"][1], l=config["lev_tax"][1]),
-        expand("{exp}/04_Statistical_analysis/01_Diversity/{exp}_{alpha}_dis_stat.xlsx", exp=config["Exp_filters"][1], alpha=config["diversity_params"][0]["alpha_distances"]),
-        expand("{exp}/04_Statistical_analysis/01_Diversity/{exp}_{alpha}_dis_stat_tukey.xlsx", exp=config["Exp_filters"][1], alpha=config["diversity_params"][0]["alpha_distances"]),
-        expand("{exp}/04_Statistical_analysis/01_Diversity/{exp}_{beta}_dis_stat_perm.xlsx", exp=config["Exp_filters"][1], beta=config["diversity_params"][1]["betas_distances"]),
-        expand("{exp}/06_Lefse_input/{exp}_lefse_input_{l}.txt", exp=config["Exp_filters"][1], l=config["lev_tax"][1]),
-        expand("{exp}/07_lefse_output/{exp}_lefse_{l}.in", exp=config["Exp_filters"][1], l=config["lev_tax"][1]),
-        expand("{exp}/07_lefse_output/{exp}_lefse_{l}.res", exp=config["Exp_filters"][1], l=config["lev_tax"][1]),
-        expand("{exp}/07_lefse_output/{exp}_lefse_{l}.png", exp=config["Exp_filters"][1], l=config["lev_tax"][1]),
-        expand("{exp}/07_lefse_output/{exp}_lefse_{l}.zip", exp=config["Exp_filters"][1], l=config["lev_tax"][1]),
+        expand("{exp}/{exp}_phyloseq_obj.rds", exp=config["Exp_filters"]),
+        expand("{exp}/{exp}_phyloseq_obj_rar.rds", exp=config["Exp_filters"]),
+        expand("{exp}/{exp}_metadata.xlsx", exp=config["Exp_filters"]),
+        expand("{exp}/{exp}_metadata.rds", exp=config["Exp_filters"]),
+        expand("{exp}/{exp}_clrs.rds", exp=config["Exp_filters"]),
+        expand("{exp}/02_Diversity/01_Alpha_diversity_{exp}.pdf", exp=config["Exp_filters"]),
+        expand("{exp}/02_Diversity/02_Beta_diversity_{exp}.pdf", exp=config["Exp_filters"]),
+        # expand("{exp}/01_Taxa/{exp}_rel_abundance_level_{l}.xlsx", exp=config["Exp_filters"], l=config["lev_tax"]),
+        # expand("{exp}/01_Taxa/{exp}_abs_abundance_level_{l}.xlsx", exp=config["Exp_filters"], l=config["lev_tax"]),
+        expand("{exp}/03_Taxa_bar_grouped/{exp}_grouped_taxa_bars.pdf", exp=config["Exp_filters"]),
+        expand("{exp}/05_Heatmaps/{exp}_Top_30_abund_rel_{l}.pdf", exp=config["Exp_filters"], l=config["lev_tax"][1:7]),
+        expand("{exp}/05_Heatmaps/{exp}_Top_30_abund_abs_{l}.pdf", exp=config["Exp_filters"], l=config["lev_tax"][1:7]),
+        expand("{exp}/04_Statistical_analysis/02_Taxa/{exp}_stat_rel_{l}.xlsx", exp=config["Exp_filters"], l=config["lev_tax"]),
+        expand("{exp}/04_Statistical_analysis/02_Taxa/{exp}_stat_rel_sig_{l}.xlsx", exp=config["Exp_filters"], l=config["lev_tax"]),
+        expand("{exp}/04_Statistical_analysis/01_Diversity/{exp}_{alpha}_dis_stat.xlsx", exp=config["Exp_filters"], alpha=config["diversity_params"][0]["alpha_distances"]),
+        expand("{exp}/04_Statistical_analysis/01_Diversity/{exp}_{alpha}_dis_stat_tukey.xlsx", exp=config["Exp_filters"], alpha=config["diversity_params"][0]["alpha_distances"]),
+        expand("{exp}/04_Statistical_analysis/01_Diversity/{exp}_{beta}_dis_stat_perm.xlsx", exp=config["Exp_filters"], beta=config["diversity_params"][1]["betas_distances"]),
+        # expand("{exp}/06_Lefse_input/{exp}_lefse_input_{l}.txt", exp=config["Exp_filters"], l=config["lev_tax"]),
+        # expand("{exp}/07_lefse_output/{exp}_lefse_{l}.in", exp=config["Exp_filters"], l=config["lev_tax"]),
+        # expand("{exp}/07_lefse_output/{exp}_lefse_{l}.res", exp=config["Exp_filters"], l=config["lev_tax"]),
+        # expand("{exp}/07_lefse_output/{exp}_lefse_{l}.png", exp=config["Exp_filters"], l=config["lev_tax"]),
+        expand("{exp}/07_lefse_output/{exp}_lefse_{l}.zip", exp=config["Exp_filters"], l=config["lev_tax"][1:7]),
 
 rule create_phyloseq_obj:
     input:
@@ -50,8 +50,8 @@ rule diversity:
         beta_diversity="{exp}/02_Diversity/02_Beta_diversity_{exp}.pdf",
         phyloseq_obj_rar="{exp}/{exp}_phyloseq_obj_rar.rds",
     params:
-        alpha_diversity_html="{exp}/02_Diversity/01_Alpha_diversity_",
-        beta_diversity_html="{exp}/02_Diversity/02_Beta_diversity_",
+        alpha_diversity_html="{exp}/02_Diversity/01_Alpha_diversity",
+        beta_diversity_html="{exp}/02_Diversity/02_Beta_diversity",
         depth=config["analysis_fctrs"][0]["depth"],
         x=config["analysis_fctrs"][1]["x"],
         facet=config["analysis_fctrs"][2]["facet"],
@@ -68,7 +68,7 @@ rule taxa_count:
         taxa_count_abs="{exp}/01_Taxa/{exp}_abs_abundance_level_{l}.xlsx",
         taxa_count_rel="{exp}/01_Taxa/{exp}_rel_abundance_level_{l}.xlsx",
     params:
-        taxrank=config["lev_tax"][1],
+        taxrank="{l}",
     script:
         "03_taxa_count_export.R"
 
@@ -79,7 +79,7 @@ rule grouped_taxa_bars:
     output:
         grouped_taxa_bars_plot="{exp}/03_Taxa_bar_grouped/{exp}_grouped_taxa_bars.pdf",
     params:
-        taxrank=config["lev_tax"][1],
+        taxrank=config["lev_tax"],
         cutoff=config["grouped_taxa_bars_params"][0]["cutoff"],
         meta_fct=config["grouped_taxa_bars_params"][1]["meta_fct"],
     script:
@@ -87,6 +87,8 @@ rule grouped_taxa_bars:
 
 rule heatmpas:
     input:
+        expand("{exp}/01_Taxa/{exp}_rel_abundance_level_{l}.xlsx", exp=config["Exp_filters"], l=config["lev_tax"]),
+        expand("{exp}/01_Taxa/{exp}_abs_abundance_level_{l}.xlsx", exp=config["Exp_filters"], l=config["lev_tax"]),
         metadata="{exp}/{exp}_metadata.rds",
         clrs="{exp}/{exp}_clrs.rds",
         df_rel="{exp}/01_Taxa/{exp}_rel_abundance_level_{l}.xlsx",
@@ -95,7 +97,7 @@ rule heatmpas:
         hm_rel="{exp}/05_Heatmaps/{exp}_Top_30_abund_rel_{l}.pdf",
         hm_abs="{exp}/05_Heatmaps/{exp}_Top_30_abund_abs_{l}.pdf",
     params:
-        taxrank=config["lev_tax"][1],
+        taxrank="{l}",
         exp="{exp}",
         meta_fct=config["grouped_taxa_bars_params"][1]["meta_fct"],
     script:
@@ -103,7 +105,8 @@ rule heatmpas:
 
 rule stat:
     input:
-        # phyloseq_obj_rar="{exp}/{exp}_phyloseq_obj_rar.rds",
+        expand("{exp}/01_Taxa/{exp}_rel_abundance_level_{l}.xlsx", exp=config["Exp_filters"], l=config["lev_tax"]),
+        expand("{exp}/01_Taxa/{exp}_abs_abundance_level_{l}.xlsx", exp=config["Exp_filters"], l=config["lev_tax"]),
         metadata="{exp}/{exp}_metadata.rds",
         clrs="{exp}/{exp}_clrs.rds",
         df_rel="{exp}/01_Taxa/{exp}_rel_abundance_level_{l}.xlsx",
@@ -114,7 +117,7 @@ rule stat:
         # alpha_dis_stat_tukey="{exp}/04_Statistical_analysis/01_Diversity/{exp}_{alpha}_dis_stat_tukey.xlsx",
         # betas_dis_stat="{exp}/04_Statistical_analysis/01_Diversity/{exp}_{beta}_dis_stat.xlsx",
     params:
-        taxrank=config["lev_tax"][1],
+        taxrank="{l}",
         exp="{exp}",
         meta_fct=config["grouped_taxa_bars_params"][1]["meta_fct"],
         alpha_dis=config["diversity_params"][0]["alpha_distances"],
@@ -132,7 +135,7 @@ rule stat_diversity_alpha:
         alpha_dis_stat_tukey="{exp}/04_Statistical_analysis/01_Diversity/{exp}_{alpha}_dis_stat_tukey.xlsx",
         # betas_dis_stat="{exp}/04_Statistical_analysis/01_Diversity/{exp}_{beta}_dis_stat.xlsx",
     params:
-        taxrank=config["lev_tax"][1],
+        # taxrank=config["lev_tax"],
         exp="{exp}",
         meta_fct=config["grouped_taxa_bars_params"][1]["meta_fct"],
         # alpha_dis=config["diversity_params"][0]["alpha_distances"],
@@ -149,7 +152,7 @@ rule stat_diversity_beta:
     output:
         betas_dis_stat="{exp}/04_Statistical_analysis/01_Diversity/{exp}_{beta}_dis_stat_perm.xlsx",
     params:
-        # taxrank=config["lev_tax"][1],
+        # taxrank=config["lev_tax"],
         exp="{exp}",
         meta_fct=config["grouped_taxa_bars_params"][1]["meta_fct"],
         betas_dis="{beta}",
@@ -158,6 +161,8 @@ rule stat_diversity_beta:
 
 rule prepare_lefse_input:
     input:
+        expand("{exp}/01_Taxa/{exp}_rel_abundance_level_{l}.xlsx", exp=config["Exp_filters"], l=config["lev_tax"]),
+        expand("{exp}/01_Taxa/{exp}_abs_abundance_level_{l}.xlsx", exp=config["Exp_filters"], l=config["lev_tax"]),
         taxa_count_rel="{exp}/01_Taxa/{exp}_rel_abundance_level_{l}.xlsx",
         k2_mpa_map=config["k2_mpa_map"],
         metadata="{exp}/{exp}_metadata.rds",
@@ -165,7 +170,7 @@ rule prepare_lefse_input:
     output:
         lefse_df="{exp}/06_Lefse_input/{exp}_lefse_input_{l}.txt",
     params:
-        taxrank=config["lev_tax"][1],
+        taxrank="{l}",
         exp="{exp}",
         meta_fct=config["grouped_taxa_bars_params"][1]["meta_fct"],
     script:
@@ -183,7 +188,7 @@ rule lefse:
     conda:
         "envs/lefse.yaml",
     params:
-        taxrank=config["lev_tax"][1],
+        taxrank="{l}",
         exp="{exp}",
         meta_fct=config["grouped_taxa_bars_params"][1]["meta_fct"],
     shell:

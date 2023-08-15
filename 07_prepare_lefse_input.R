@@ -11,10 +11,11 @@ mpa_map <- import(snakemake@input$k2_mpa_map) %>%
             str_replace_all(" ", "_")
     )
 
-
+snakemake@params$taxrank
+snakemake@input$taxa_count_rel
 # prepare the data ----
 import(snakemake@input$taxa_count_rel) %>%
-    as_tibble() %>%
+    as_tibble()  %>%
     # filter(!!as.symbol(filter_factor) %in% filter_criteria) %>%
     mutate(!!as.symbol(snakemake@params$taxrank) := str_replace_all(!!as.symbol(snakemake@params$taxrank), " sp. ", "_") %>%
         str_replace_all(" ", "_")) %>%
