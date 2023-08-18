@@ -24,7 +24,7 @@ rule targets:
         # expand("{exp}/07_lefse_output/{exp}_lefse_{l}.res", exp=config["Exp_filters"], l=config["lev_tax"]),
         # expand("{exp}/07_lefse_output/{exp}_lefse_{l}.png", exp=config["Exp_filters"], l=config["lev_tax"]),
         expand("{exp}/07_lefse_output/{exp}_lefse_{l}.zip", exp=config["Exp_filters"], l=config["lev_tax"][2:6]),
-        expand("{exp}/08_Read_norm_Deseq/{exp}_abs_abundance_level_{l}.rds", exp=config["Exp_filters"][2], l=config["lev_tax"][1]),
+        expand("{exp}/08_Read_norm_Deseq/{exp}_abs_abundance_level_{l}.rds", exp=config["Exp_filters"], l=config["lev_tax"][6]),
 
 rule create_phyloseq_obj:
     input:
