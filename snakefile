@@ -23,7 +23,8 @@ rule targets:
         # expand("{exp}/07_lefse_output/{exp}_lefse_{l}.in", exp=config["Exp_filters"], l=config["lev_tax"]),
         # expand("{exp}/07_lefse_output/{exp}_lefse_{l}.res", exp=config["Exp_filters"], l=config["lev_tax"]),
         # expand("{exp}/07_lefse_output/{exp}_lefse_{l}.png", exp=config["Exp_filters"], l=config["lev_tax"]),
-        expand("{exp}/07_lefse_output/{exp}_lefse_{l}.zip", exp=config["Exp_filters"], l=config["lev_tax"][1:7]),
+        expand("{exp}/07_lefse_output/{exp}_lefse_{l}.zip", exp=config["Exp_filters"], l=config["lev_tax"][2:6]),
+        expand("{exp}/08_Read_norm_Deseq/{exp}_abs_abundance_level_{l}.rds", exp=config["Exp_filters"][2], l=config["lev_tax"][1]),
 
 rule create_phyloseq_obj:
     input:
@@ -199,3 +200,18 @@ rule lefse:
         lefse_plot_cladogram.py {output.lefse_res} {output.lefse_clad} --format pdf --dpi 1200 
         lefse_plot_features.py {output.lefse_in} {output.lefse_res} {output.lefse_zip} --format pdf --dpi 1200 --archive zip
         """
+
+rule Deseq_taxa:
+    input:
+        taxa_count_abs_in="{exp}/01_Taxa/{exp}_abs_abundance_level_{l}.xlsx",
+        phyloseq_obj="{exp}/{exp}_phyloseq_obj.rds",
+        metadata="{exp}/{exp}_metadata.rds",
+        clrs="{exp}/{exp}_clrs.rds",
+    output:
+        taxa_count_abs_out="{exp}/08_Read_norm_Deseq/{exp}_abs_abundance_level_{l}.rds",
+    params:
+        exp="{exp}",
+        taxrank="{l}",
+        fct=config["grouped_taxa_bars_params"][1]["meta_fct"],
+    script:
+        "08_Deseq_taxa.R"
